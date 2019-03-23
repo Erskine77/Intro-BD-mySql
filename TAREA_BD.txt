@@ -1,0 +1,71 @@
+create database proyeto_final;
+
+create table emailclientes(
+	codigoEmail int not null primary key,
+	email varchar(128) not null unique,
+	nit varchar(64) not null unique
+) engine = InnoDB;
+
+create table clientes(
+	nit varchar(64) not null primary key references emailclientes(nit),
+	dpi varchar(64) not null unique,
+	nombre varchar(128) not null,
+	direccion varchar(128) not null
+) engine = InnoDB;
+
+create table telefonoclientes(
+	codigoTelefono int not null primary key,
+	numero varchar(32) not null,
+	descripcion varchar(128) not null,
+	nit varchar(64) not null unique references clientes(nit)
+) engine = InnoDB;
+
+create table facturas(
+	numeroFactura int not null primary key, --auto_increment
+	nit varchar(64) not null unique references clientes(nit),
+	fecha date not null,
+	total decimal(10,2) not null
+)
+
+create table categorias(
+	codigoCategoria int not null primary key,
+	descripcion varchar(128) not null
+) engine = InnoDB;
+
+create table tipoempaques(
+	codigoEmpaque int not null primary key,
+	descripcion varchar(128) not null
+) engine = InnoDB;
+
+create table productos(
+	codigoProducto int not null primary key, --auto_increment
+	codigoCategoria int not null references categorias(codigoCategoria),
+	codigoEmpaque int not null references tipoempaques(codigoEmpaque),
+	descripcion varchar(128) not null,
+	precioUnitario decimal(10,2) not null,
+	precioPorDocena decimal(10,2) not null,
+	precioPorMayor decimal(10,2) not null,
+	existencia int not null,
+	imagen varchar(128)
+) engine = InnoDB;
+
+create table detallefacturas(
+	codigoDetalle int primary key, --auto_increment
+	numeroFactura int not null references facturas(numeroFactura),
+	codigoProducto int not null references productos(codigoProducto),
+	cantidad int not null,
+	precio decimal(10,2) not null,
+	descuento decimal(10,2) not null
+) engine = InnoDB;
+
+create table inventarios(
+	codigoInventario int primary key, --auto_increment
+	codigoProducto int not null references productos(codigoProducto),
+	fecha date not null,
+	tipoRegistro varchar(1)not null,
+	precio decimal(10,2) not null,
+	entradas int not null,
+	salidas int not null
+) engine = InnoDB;
+
+create table proveedores
